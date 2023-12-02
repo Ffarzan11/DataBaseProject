@@ -4,7 +4,7 @@ out/
 !**/src/test/**/out/
 
 ### Src ###
-src/DatabaseConnection/
+/src/DatabaseConnection/
 
 ### Eclipse ###
 .apt_generated
