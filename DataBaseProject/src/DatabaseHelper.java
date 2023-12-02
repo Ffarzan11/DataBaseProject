@@ -8,19 +8,92 @@ import java.util.List;
 
 public class DatabaseHelper {
 
-
-
-    private void createPersonTable(Connection connection) throws SQLException {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS Person (" +
-                "ssn INT PRIMARY KEY," +
-                "phone INT," +
-                "name VARCHAR(255)," +
-                "address VARCHAR(255))";
+	public void createPersonTable(Connection connection) throws SQLException {
+      String createPersonTableSQL = "CREATE TABLE IF NOT EXISTS Person ("
+            + "ssn INT(9),"
+            + "phone INT(9),"
+            + "name VARCHAR(40),"
+            + "address VARCHAR(100),"
+            + "PRIMARY KEY (ssn)"
+            + ")";
 
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(createTableSQL);
+            statement.executeUpdate(createPersonTableSQL);
         }
-    }
+   }
+   
+   public void createFacultyTable(Connection connection) throws SQLException {
+      String createFacultyTableSQL = "CREATE TABLE IF NOT EXISTS Faculty ("
+            + "faculty_id INT(9),"
+            + "ssn INT(9),"
+            + "PRIMARY KEY (faculty_id),"
+            + "FOREIGN KEY (ssn) REFERENCES Person(ssn)"
+            + ")";
+
+      try (Statement statement = connection.createStatement()) {
+          statement.executeUpdate(createFacultyTableSQL);
+      }
+   }
+   
+   public void createCardTable(Connection connection) throws SQLException {
+      String createCardTableSQL = "CREATE TABLE IF NOT EXISTS Card ("
+            + "card_number INT(12),"
+            + "expiration_date DATE,"
+            + "ssn INT(9),"
+            + "PRIMARY KEY (card_number),"
+            + "FOREIGN KEY (ssn) REFERENCES Person(ssn)"
+            + ")";
+
+      try (Statement statement = connection.createStatement()) {
+          statement.executeUpdate(createCardTableSQL);
+      }
+   }
+   
+   public void createBookTable(Connection connection) throws SQLException {
+      String createBookTableSQL = "CREATE TABLE IF NOT EXISTS Book ("
+            + "ISBN INT(13),"
+            + "book_title VARCHAR(100),"
+            + "book_description VARCHAR(1500),"
+            + "author VARCHAR(50),"
+            + "copy_number INT(15),"
+            + "PRIMARY KEY (ISBN)"
+            + ")";
+
+      try (Statement statement = connection.createStatement()) {
+          statement.executeUpdate(createBookTableSQL);
+      }
+   }
+   public void createTransactionTable(Connection connection) throws SQLException {
+      String createTransactionTableSQL = "CREATE TABLE IF NOT EXISTS Transaction ("
+            + "transaction_id INT(9),"
+            + "date_time DATE,"
+            + "copy_number INT(15),"
+            + "ISBN INT(13),"
+            + "return_date DATE,"
+            + "librarian_id INT(9),"
+            + "card_number INT(12),"
+            + "PRIMARY KEY (transaction_id),"
+            + "FOREIGN KEY (copy_number) REFERENCES Book(copy_number),"
+            + "FOREIGN KEY (ISBN) REFERENCES Book(ISBN),"
+            + "FOREIGN KEY (librarian_id) REFERENCES Librarian(librarian_id),"
+            + "FOREIGN KEY (card_number) REFERENCES Card(card_number)"
+            + ")";
+
+      try (Statement statement = connection.createStatement()) {
+          statement.executeUpdate(createTransactionTableSQL);
+      }
+   }
+   public void createLibrarianTable(Connection connection) throws SQLException {
+      String createLibrarianTableSQL = "CREATE TABLE IF NOT EXISTS Librarian ("
+            + "librarian_id INT(12),"
+            + "librarian_title VARCHAR(25),"
+            + "PRIMARY KEY (librarian_id)"
+            + ")";
+
+      try (Statement statement = connection.createStatement()) {
+          statement.executeUpdate(createLibrarianTableSQL);
+      }
+   }
     public void createAndInsertPerson(Connection connection,Person person) throws SQLException {
         createPersonTable(connection);
 
