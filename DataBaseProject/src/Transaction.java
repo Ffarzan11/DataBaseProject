@@ -1,24 +1,27 @@
+import java.sql.Date;
 
 public class Transaction {
     
     private int Transaction_ID;
-    private String date;
+    private Date date;
     private int copy_number;
-    private int ISBN;
-    private String return_date;
+    private long ISBN;
+    private Date return_date;
     private int Librarian_ID;
+    private  long card_num;
 
     public Transaction(){
         //Default constructor
     }
 
-    public Transaction(int Transaction_ID, String date, int copy_number, int ISBN, String return_date, int Librarian_ID){
+    public Transaction(int Transaction_ID, Date date, int copy_number, long ISBN, Date return_date, int Librarian_ID, long card_num){
         this.Transaction_ID = Transaction_ID;
         this.date = date;
         this.copy_number = copy_number;
         this.ISBN = ISBN;
         this.return_date = return_date;
         this.Librarian_ID = Librarian_ID;
+        this.card_num = card_num;
     }
 
 
@@ -31,11 +34,11 @@ public class Transaction {
     }
 
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -50,21 +53,21 @@ public class Transaction {
     
 
     
-    public int getISBN() {
+    public long getISBN() {
         return ISBN;
     }
 
-    public void setISBN(int ISBN) {
+    public void setISBN(long ISBN) {
         this.ISBN = ISBN;
     } 
     
     
     
-    public String getReturn_date() {
+    public Date getReturn_date() {
         return return_date;
     }
 
-    public void setReturn_date(String return_date) {
+    public void setReturn_date(Date return_date) {
         this.return_date = return_date;
     }
 
@@ -78,6 +81,13 @@ public class Transaction {
         this.Librarian_ID = Librarian_ID;
     }
 
+    public long getCard_num() {
+        return card_num;
+    }
+
+    public void setCard_num(long card_num) {
+        this.card_num = card_num;
+    }
 
     @Override
     public String toString() {

@@ -1,6 +1,6 @@
 public class Book {
     
-    private int ISBN;
+    private long ISBN;
     private String title;
     private String description;
     private String author_name;
@@ -11,7 +11,7 @@ public class Book {
         //default constructor
     }
 
-    public Book(int ISBN, String title, String description, String author_name, int copy_number){
+    public Book(long ISBN, String title, String description, String author_name, int copy_number){
         this.ISBN = ISBN;
         this.title = title;
         this.description = description;
@@ -19,11 +19,11 @@ public class Book {
         this.copy_number = copy_number;
     }
 
-    public int getISBN() {
+    public long getISBN() {
         return ISBN;
     }
 
-    public void setISBN(int ISBN) {
+    public void setISBN(long ISBN) {
         this.ISBN = ISBN;
     } 
     

@@ -1,7 +1,7 @@
 public class Person {
 
     private int ssn;
-    private int phone;
+    private long phone;
     private String name;
     private String address;
 
@@ -9,7 +9,7 @@ public class Person {
         // Default constructor
     }
 
-    public Person(int ssn, String name,  int phone, String address) {
+    public Person(int ssn, String name,  long phone, String address) {
         this.ssn = ssn;
         this.phone = phone;
         this.name = name;
@@ -24,11 +24,11 @@ public class Person {
         this.ssn = ssn;
     }
 
-    public int getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 

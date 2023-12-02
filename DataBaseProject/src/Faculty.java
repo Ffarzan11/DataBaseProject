@@ -6,8 +6,8 @@ public class Faculty extends Person {
         // Default constructor
     }
 
-    public Faculty (int SSN, String name, int phone, String address, int Faculty_ID) {
-        super(SSN, phone, name, address); // Calling constructor of superclass Person
+    public Faculty (int SSN, String name, long phone, String address, int Faculty_ID) {
+        super(SSN, name, phone, address); // Calling constructor of superclass Person
         this.Faculty_ID = Faculty_ID;
     }
     

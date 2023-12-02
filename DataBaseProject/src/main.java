@@ -5,39 +5,60 @@ public class main{
 	public static void main(String args[]) {
       try (Connection connection = DatabaseConnection.getConnection()) {
          System.out.println("Connected to the database!");
-         DatabaseHelper personDAO = new DatabaseHelper();
+         DatabaseHelper db = new DatabaseHelper();
          
-         personDAO.createPersonTable(connection);
-         personDAO.createFacultyTable(connection);
-         personDAO.createCardTable(connection);
-         personDAO.createBookTable(connection);
-         personDAO.createTransactionTable(connection);
-         personDAO.createLibrarianTable(connection);
+         db.createPersonTable(connection);
+         db.createFacultyTable(connection);
+         db.createCardTable(connection);
+         db.createBookTable(connection);
+         db.createTransactionTable(connection);
+         db.createLibrarianTable(connection);
          
-         Person personOne = new Person(100100100, "Alice Smith", 646890359, "746 Broadway Appartment 1F");
+         Person personOne = new Person(100100100, "Alice Smith", 2221114453L, "746 Broadway Apartment 1F");
+         Person personTwo = new Person(007220130, "Mary Austin", 4349670982L, "5 Corona, Apartment 2E");
+         Faculty facultyOne = new Faculty(personOne.getSsn(), personOne.getName(), personOne.getPhone(), personOne.getAddress(), 333444222);
+         Librarian librarianOne = new Librarian(222111333, "Chief Librarian");
+         Book bookOne = new Book(1234567891234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 1 );
+
+         java.sql.Date sqlDate = new java.sql.Date(2023 - 1900, 11, 1);
+         Card cardOne = new Card(123456789653L, sqlDate, personOne.getSsn());
+
+          java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 12, 15);
+          java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2024 - 1900, 1, 15);
+         Transaction transactionOne = new Transaction(001200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
+
+
          // Create and insert a new person
-         personDAO.createAndInsertPerson(connection, personOne);
+         db.insertPerson(connection, personOne);
+         db.insertFaculty(connection, facultyOne);
+         db.insertLibrarian(connection, librarianOne);
+         db.insertBook(connection, bookOne);
+         db.insertCard(connection, cardOne);
+         db.insertTransaction(connection, transactionOne);
+
 
          // Show the contents of the "Person" table
-         List<Person> persons = personDAO.getAllPersons(connection);
+         List<Person> persons = db.getAllPersons(connection);
          for (Person person : persons) {
              System.out.println(person);
          }
 
+         personOne.setPhone( 999222000);
+         personOne.setAddress("345 Broadway Apartment 3C");
          // Modify the person's information
-         personDAO.modifyPerson(connection, 123456783, 987654321, "Jane Doe", "456 Oak St");
+         db.modifyPerson(connection, personOne);
 
          // Show the updated contents of the "Person" table
-         List<Person> updatedPersons = personDAO.getAllPersons(connection);
+         List<Person> updatedPersons = db.getAllPersons(connection);
          for (Person person : updatedPersons) {
              System.out.println(person);
          }
 
          // Delete the person with SSN 123456783
-         personDAO.deletePerson(connection, 123456783);
+         db.deletePerson(connection, 123456783);
 
          // Show the final contents of the "Person" table
-         List<Person> finalPersons = personDAO.getAllPersons(connection);
+         List<Person> finalPersons = db.getAllPersons(connection);
          for (Person person : finalPersons) {
              System.out.println(person);
          }

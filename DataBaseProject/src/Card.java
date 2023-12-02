@@ -1,23 +1,26 @@
+import java.sql.Date;
+
 public class Card {
-    private int cardNumber;
+    private long cardNumber;
     private int ssn;
-    private String expirationDate;
+    private Date expirationDate;
 
     public Card() {
         // Default cons.
     }
 
-    public Card(int cardNumber, int ssn, String expirationDate) {
+    public Card(long cardNumber,  Date expirationDate, int ssn) {
         this.cardNumber = cardNumber;
-        this.ssn = ssn;
         this.expirationDate = expirationDate;
+        this.ssn = ssn;
+
     }
 
-    public int getCardNumber() {
+    public long getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber() {
+    public void setCardNumber(long cardNumber) {
         this.cardNumber = cardNumber;
     }
 
@@ -25,7 +28,7 @@ public class Card {
         return ssn;
     }
 
-    public String getExpirationDate() {
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
