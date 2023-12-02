@@ -6,10 +6,11 @@ public class main{
       try (Connection connection = DatabaseConnection.getConnection()) {
          System.out.println("Connected to the database!");
 
-         PersonDAO personDAO = new PersonDAO();
+         DatabaseHelper personDAO = new DatabaseHelper();
 
+         Person personOne = new Person(100100100, "Alice Smith", 646890359, "746 Broadway Appartment 1F");
          // Create and insert a new person
-         personDAO.createAndInsertPerson(connection, 123456783, 123456789, "John Doe", "123 Main St");
+         personDAO.createAndInsertPerson(connection, personOne);
 
          // Show the contents of the "Person" table
          List<Person> persons = personDAO.getAllPersons(connection);

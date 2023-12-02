@@ -9,7 +9,7 @@ public class Person {
         // Default constructor
     }
 
-    public Person(int ssn, int phone, String name, String address) {
+    public Person(int ssn, String name,  int phone, String address) {
         this.ssn = ssn;
         this.phone = phone;
         this.name = name;

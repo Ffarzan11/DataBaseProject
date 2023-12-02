@@ -6,18 +6,31 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonDAO {
+public class DatabaseHelper {
 
-    public void createAndInsertPerson(Connection connection, int ssn, int phone, String name, String address) throws SQLException {
+
+
+    private void createPersonTable(Connection connection) throws SQLException {
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS Person (" +
+                "ssn INT PRIMARY KEY," +
+                "phone INT," +
+                "name VARCHAR(255)," +
+                "address VARCHAR(255))";
+
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(createTableSQL);
+        }
+    }
+    public void createAndInsertPerson(Connection connection,Person person) throws SQLException {
         createPersonTable(connection);
 
         String insertSQL = "INSERT INTO Person (ssn, phone, name, address) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-            preparedStatement.setInt(1, ssn);
-            preparedStatement.setInt(2, phone);
-            preparedStatement.setString(3, name);
-            preparedStatement.setString(4, address);
+            preparedStatement.setInt(1, person.getSsn());
+            preparedStatement.setInt(2, person.getPhone());
+            preparedStatement.setString(3, person.getName());
+            preparedStatement.setString(4, person.getAddress());
 
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
@@ -66,18 +79,6 @@ public class PersonDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) deleted.");
-        }
-    }
-
-    private void createPersonTable(Connection connection) throws SQLException {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS Person (" +
-                "ssn INT PRIMARY KEY," +
-                "phone INT," +
-                "name VARCHAR(255)," +
-                "address VARCHAR(255))";
-
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(createTableSQL);
         }
     }
 }

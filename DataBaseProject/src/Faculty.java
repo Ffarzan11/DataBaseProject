@@ -7,7 +7,7 @@ public class Faculty extends Person {
     }
 
     public Faculty (int SSN, String name, int phone, String address, int Faculty_ID) {
-        super(ssn, phone, name, address) // Calling constructor of superclass Person 
+        super(SSN, phone, name, address); // Calling constructor of superclass Person
         this.Faculty_ID = Faculty_ID;
     }
     
@@ -25,7 +25,7 @@ public class Faculty extends Person {
                 ", phone=" + getPhone() +
                 ", name='" + getName() + '\'' +
                 ", address='" + getAddress() + '\'' +
-                ", facultyID=" + facultyID +
+                ", facultyID=" + Faculty_ID +
                 '}';
     }
 }
