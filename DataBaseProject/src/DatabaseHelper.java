@@ -21,6 +21,8 @@ public class DatabaseHelper {
             statement.executeUpdate(createTableSQL);
         }
     }
+
+
     public void createAndInsertPerson(Connection connection,Person person) throws SQLException {
         createPersonTable(connection);
 
