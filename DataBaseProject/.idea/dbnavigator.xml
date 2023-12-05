@@ -22,11 +22,24 @@
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
       <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Book" />
-      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="consoles/Connection" />
+      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Person" />
+      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Faculty" />
+      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Transaction" />
+      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Card" />
+      <object connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" object-ref="schemas/librarydatabase/tables/Librarian" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Book" active-filter-id="" />
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Card" active-filter-id="" />
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Faculty" active-filter-id="EMPTY_FILTER">
+      <filter id="dedc78ea-aa53-4bc1-b9f9-ee85b83f545a" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="faculty_id" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Book" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Librarian" active-filter-id="" />
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Person" active-filter-id="" />
+    <filter-actions connection-id="f9a226ef-23eb-4853-bf2a-8b9b1ed997c5" dataset="librarydatabase.Transaction" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class DatabaseHelper {
 
+    //Strings to create table
     private static final String PersonTable =  "CREATE TABLE IF NOT EXISTS Person ("
             + "ssn INT(9),"
             + "phone BIGINT(10),"
@@ -38,8 +39,6 @@ public class DatabaseHelper {
     private static final String IndexExistsQuery = "SELECT COUNT(*) AS index_count FROM information_schema.statistics WHERE table_name = 'Book' AND index_name = 'idx_copy_number'";
     private static final String CreateIndexCopyNumber = "CREATE INDEX idx_copy_number ON Book(copy_number)";
 
-
-
     private static final String CardTable = "CREATE TABLE IF NOT EXISTS Card ("
             + "card_number BIGINT(12),"
             + "expiration_date DATE,"
@@ -62,6 +61,8 @@ public class DatabaseHelper {
             + "FOREIGN KEY (card_number) REFERENCES Card(card_number)"
             + ")";
 
+
+    //create the tables
 	public void createPersonTable(Connection connection) throws SQLException {
 
         try (Statement statement = connection.createStatement()) {
@@ -73,7 +74,6 @@ public class DatabaseHelper {
 
     }
 
-   
    public void createFacultyTable(Connection connection) throws SQLException {
       try (Statement statement = connection.createStatement()) {
           statement.executeUpdate(FacultyTable);
@@ -129,11 +129,19 @@ public class DatabaseHelper {
           e.printStackTrace();
       }
    }
+
+    /**
+     *
+     * @param connection connection with the database
+     * @param person Person to be inserted
+     * @throws SQLException exception that will be thrown if the insert causes error
+     */
     public void insertPerson(Connection connection,Person person) throws SQLException {
         createPersonTable(connection);
 
         String insertSQL = "INSERT INTO  Person (ssn, phone, name, address) VALUES (?, ?, ?, ?)";
 
+        //Insert the person data to the database
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setInt(1, person.getSsn());
             preparedStatement.setLong(2, person.getPhone());
@@ -143,34 +151,67 @@ public class DatabaseHelper {
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     *
+     * @param connection connection to database
+     * @param faculty Faculty to be inserted
+     * @throws SQLException Exception that will be thrown in there is an error while inserting
+     */
     public void insertFaculty(Connection connection,Faculty faculty) throws SQLException {
         createFacultyTable(connection);
 
         String insertSQL = "INSERT INTO  Faculty (faculty_id, ssn) VALUES (?, ?)";
 
+        //inserting the values to table
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setInt(1, faculty.getFacultyID());
             preparedStatement.setInt(2, faculty.getSsn());
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     *
+     * @param connection connection to the database
+     * @param librarian the librarian to be inserted
+     * @throws SQLException throws SQL exception if there is an error inserting
+     */
     public  void insertLibrarian(Connection connection, Librarian librarian) throws SQLException {
         createLibrarianTable(connection);
 
         String insertSQL = "INSERT INTO  Librarian (librarian_id, librarian_title) VALUES (?, ?)";
+        //inserting librarian data to the table
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setInt(1, librarian.getLibrarian_ID());
             preparedStatement.setString(2, librarian.getLibratian_title());
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     *
+     * @param connection connection to the database
+     * @param book the book to be inserted
+     * @throws SQLException throws sql exception if there is an error inserting book
+     */
     public void insertBook(Connection connection, Book book) throws SQLException {
         createBookTable(connection);
         String insertSQL = "INSERT INTO Book (ISBN, book_title, book_description, author,copy_number) VALUES (?, ?, ?, ?, ?)";
+
+        //inserting book data to the table
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setLong(1, book.getISBN());
             preparedStatement.setString(2, book.getTitle());
@@ -180,10 +221,21 @@ public class DatabaseHelper {
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     *
+     * @param connection connection to database
+     * @param card Card to be inserted
+     * @throws SQLException throws SQL exception if there is an issue inserting the card
+     */
     public  void insertCard(Connection connection, Card card) throws SQLException {
         createCardTable(connection);
         String insertSQL = "INSERT INTO  Card (card_number, expiration_date, ssn) VALUES (?, ?, ?)";
+        //inserting card values to the table
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setLong(1, card.getCardNumber());
             preparedStatement.setDate(2, card.getExpirationDate());
@@ -191,9 +243,18 @@ public class DatabaseHelper {
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
+    /**
+     *
+     * @param connection connection to the database
+     * @param transaction transaction that is to be added in the database
+     * @throws SQLException throws exception if there is an issue inserting the transaction
+     */
     public void insertTransaction(Connection connection, Transaction transaction) throws SQLException {
         createTransactionTable(connection);
         String insertSQL = "INSERT INTO  Transaction (transaction_id," +
@@ -204,6 +265,7 @@ public class DatabaseHelper {
                                                             "librarian_id, " +
                                                             "card_number) " +
                                                             "VALUES (?, ?, ?, ?,?,?,?)";
+        //inserting the transaction to db
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
             preparedStatement.setInt(1, transaction.getTransaction_ID());
             preparedStatement.setDate(2,transaction.getDate());
@@ -215,10 +277,22 @@ public class DatabaseHelper {
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) inserted.");
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     *
+     * @param connection connection to the database
+     * @param person the person to be modified
+     * @throws SQLException throws exception if the database fails to modify
+     */
     public void modifyPerson(Connection connection, Person person) throws SQLException {
+        //update the person whose ssn matches the ssn of the person given in parameter
         String modifySQL = "UPDATE Person SET phone = ?, name = ?, address = ? WHERE ssn = ?";
 
+        //modifying person
         try (PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
             preparedStatement.setLong(1, person.getPhone());
             preparedStatement.setString(2, person.getName());
@@ -233,8 +307,16 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     *
+     * @param connection connection to the database
+     * @param card Card to be modified
+     * @throws SQLException throws SQL exception if there is an error modifying the  card
+     */
     public  void modifyCard(Connection connection, Card card) throws  SQLException {
+        //modify the card whose card number matches the card number of the card given in parameter
         String modifySQL = "UPDATE Card SET expiration_date = ?,  WHERE card = ?";
+        //modify card
         try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
             preparedStatement.setLong(1, card.getCardNumber());
             preparedStatement.setDate(2, card.getExpirationDate());
@@ -245,8 +327,17 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
     }
+
+    /**
+     *
+     * @param connection connection to the database
+     * @param book the book to be modified
+     * @throws SQLException throws exception if there is an error modifying the book
+     */
     public  void  modifyBook(Connection connection, Book book) throws  SQLException {
+        //modify the book whose ISBN matches the ISBN of the book given in param
         String modifySQL = "UPDATE Book SET book_description = ?, copy_number WHERE ISBN = ?";
+        //modifying the book
         try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
             preparedStatement.setLong(1, book.getISBN());
             preparedStatement.setString(3, book.getDescription());

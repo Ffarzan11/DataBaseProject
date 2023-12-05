@@ -8,7 +8,7 @@ public class TestSQL {
     public static void main(String[] args) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/LibraryDatabase";
         String username = "root";
-        String password = "1998";
+        String password = "19983312023";
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
            System.out.println("Connected to the database!");
 

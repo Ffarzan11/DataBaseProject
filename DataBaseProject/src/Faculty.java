@@ -2,6 +2,7 @@ public class Faculty extends Person {
 
     private int Faculty_ID;
 
+    //default constructor
     public Faculty() {
         // Default constructor
     }
