@@ -371,11 +371,18 @@ public class DatabaseHelper {
         return persons;
     }
 
-    public void deletePerson(Connection connection, int ssn) throws SQLException {
+    /**
+     *
+     * @param connection database connection
+     * @param person the person to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deletePerson(Connection connection,Person person) throws SQLException {
+        //delete the person whose ssn matches the ssn of the person given on param
         String deleteSQL = "DELETE FROM Person WHERE ssn = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
-            preparedStatement.setInt(1, ssn);
+            preparedStatement.setInt(1, person.getSsn());
 
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) deleted.");

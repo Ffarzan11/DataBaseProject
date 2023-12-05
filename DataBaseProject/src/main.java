@@ -69,7 +69,7 @@ public class main{
          }
 
          // Delete the person with SSN 123456783
-         db.deletePerson(connection, 123456783);
+         db.deletePerson(connection, personTwo);
 
          // Show the final contents of the "Person" table
          List<Person> finalPersons = db.getAllPersons(connection);
