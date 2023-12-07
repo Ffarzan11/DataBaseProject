@@ -33,7 +33,7 @@ public class DatabaseHelper {
             + "book_description VARCHAR(1500),"
             + "author VARCHAR(50),"
             + "copy_number INT(3),"
-            + "PRIMARY KEY (ISBN)"
+            + "PRIMARY KEY (ISBN, copy_number)"
             + ")";
 
     private static final String IndexExistsQuery = "SELECT COUNT(*) AS index_count FROM information_schema.statistics WHERE table_name = 'Book' AND index_name = 'idx_copy_number'";
@@ -298,7 +298,6 @@ public class DatabaseHelper {
             preparedStatement.setString(2, person.getName());
             preparedStatement.setString(3, person.getAddress());
             preparedStatement.setInt(4, person.getSsn());
-
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) modified.");
         }
@@ -315,11 +314,11 @@ public class DatabaseHelper {
      */
     public  void modifyCard(Connection connection, Card card) throws  SQLException {
         //modify the card whose card number matches the card number of the card given in parameter
-        String modifySQL = "UPDATE Card SET expiration_date = ?,  WHERE card = ?";
+        String modifySQL = "UPDATE Card SET expiration_date = ?  WHERE card_number = ?";
         //modify card
         try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
-            preparedStatement.setLong(1, card.getCardNumber());
-            preparedStatement.setDate(2, card.getExpirationDate());
+            preparedStatement.setDate(1, card.getExpirationDate());
+            preparedStatement.setLong(2, card.getCardNumber());
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) modified.");
         }
@@ -336,12 +335,14 @@ public class DatabaseHelper {
      */
     public  void  modifyBook(Connection connection, Book book) throws  SQLException {
         //modify the book whose ISBN matches the ISBN of the book given in param
-        String modifySQL = "UPDATE Book SET book_description = ?, copy_number WHERE ISBN = ?";
+        String modifySQL = "UPDATE Book SET book_title=?, book_description = ?, author=? WHERE ISBN = ? AND copy_number=?";
         //modifying the book
         try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
-            preparedStatement.setLong(1, book.getISBN());
-            preparedStatement.setString(3, book.getDescription());
-            preparedStatement.setInt(4, book.getCopy_number());
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getDescription());
+            preparedStatement.setString(3, book.getAuthor_name());
+            preparedStatement.setLong(4, book.getISBN());
+            preparedStatement.setInt(5, book.getCopy_number());
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) modified.");
         }
@@ -350,6 +351,36 @@ public class DatabaseHelper {
         }
     }
 
+    public  void  modifyTransaction(Connection connection, Transaction transaction) throws  SQLException {
+       //modify the transaction date and return date
+       String modifySQL = "UPDATE Transaction SET date_time = ?, return_date =?  WHERE transaction_id = ?";
+       //modifying the book
+       try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
+           preparedStatement.setDate(1, transaction.getDate());
+           preparedStatement.setDate(2, transaction.getReturn_date());
+           preparedStatement.setInt(3, transaction.getTransaction_ID());
+           int rowsAffected = preparedStatement.executeUpdate();
+           System.out.println(rowsAffected + " row(s) modified.");
+       }
+       catch (SQLException e) {
+           e.printStackTrace();
+       }
+   }
+    
+    public  void  modifyLibrarian(Connection connection, Librarian librarian) throws  SQLException {
+       //modify the librarian title
+       String modifySQL = "UPDATE Librarian SET librarian_title= ? WHERE librarian_id = ?";
+       //modifying the book
+       try(PreparedStatement preparedStatement = connection.prepareStatement(modifySQL)) {
+           preparedStatement.setString(1, librarian.getLibratian_title());
+           preparedStatement.setInt(2, librarian.getLibrarian_ID());
+           int rowsAffected = preparedStatement.executeUpdate();
+           System.out.println(rowsAffected + " row(s) modified.");
+       }
+       catch (SQLException e) {
+           e.printStackTrace();
+       }
+   }
 
     public List<Person> getAllPersons(Connection connection) throws SQLException {
         List<Person> persons = new ArrayList<>();
@@ -361,7 +392,7 @@ public class DatabaseHelper {
             while (resultSet.next()) {
                 Person person = new Person();
                 person.setSsn(resultSet.getInt("ssn"));
-                person.setPhone(resultSet.getInt("phone"));
+                person.setPhone(resultSet.getLong("phone"));
                 person.setName(resultSet.getString("name"));
                 person.setAddress(resultSet.getString("address"));
                 persons.add(person);

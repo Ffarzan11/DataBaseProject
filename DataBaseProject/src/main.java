@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 public class main{
@@ -12,8 +13,8 @@ public class main{
          db.createFacultyTable(connection);
          db.createCardTable(connection);
          db.createBookTable(connection);
-         db.createTransactionTable(connection);
          db.createLibrarianTable(connection);
+         db.createTransactionTable(connection);
 
          //person dummy data
          Person personOne = new Person(100100100, "Alice Smith", 2221114453L, "746 Broadway Apartment 1F");
@@ -27,7 +28,7 @@ public class main{
 
          //book dummy data
          Book bookOne = new Book(1234567891234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 1 );
-
+         Book bookTwo = new Book(1234567891234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 2 );
          //creating date object since card stores SQL date
          java.sql.Date sqlDate = new java.sql.Date(2023 - 1900, 11, 1);
 
@@ -35,10 +36,10 @@ public class main{
          Card cardOne = new Card(123456789653L, sqlDate, personOne.getSsn());
 
          // //creating date object since transaction stores SQL date
-          java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 12, 15);
-          java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2024 - 1900, 1, 15);
+         java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 12, 15);
+         java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2024 - 1900, 1, 15);
 
-          //creating dummy transaction data
+         //creating dummy transaction data
          Transaction transactionOne = new Transaction(001200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
 
 
@@ -47,6 +48,7 @@ public class main{
          db.insertFaculty(connection, facultyOne);
          db.insertLibrarian(connection, librarianOne);
          db.insertBook(connection, bookOne);
+         db.insertBook(connection, bookTwo);
          db.insertCard(connection, cardOne);
          db.insertTransaction(connection, transactionOne);
 
@@ -59,8 +61,19 @@ public class main{
 
          personOne.setPhone( 999222000);
          personOne.setAddress("345 Broadway Apartment 3C");
-         // Modify the person's information
+         librarianOne.setLibrarian_title("Janitor");
+         bookOne.setTitle("Of mice and men");
+         
+         java.sql.Date sqlDateNew = new java.sql.Date(2024 - 1900, 2, 2);
+         cardOne.setExpirationDate(sqlDateNew);
+         transactionOne.setReturn_date(sqlDateNew);
+         
+         // Modify information
          db.modifyPerson(connection, personOne);
+         db.modifyLibrarian(connection, librarianOne);
+         db.modifyBook(connection, bookOne);
+         db.modifyCard(connection, cardOne);
+         db.modifyTransaction(connection, transactionOne);
 
          // Show the updated contents of the "Person" table
          List<Person> updatedPersons = db.getAllPersons(connection);
