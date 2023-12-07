@@ -32,8 +32,8 @@ public class Card {
         return expirationDate;
     }
 
-    public void setExpirationDate() {
-        this.expirationDate = expirationDate;
+    public void setExpirationDate(Date date) {
+        this.expirationDate = date;
     }
 
     public String toString() {
