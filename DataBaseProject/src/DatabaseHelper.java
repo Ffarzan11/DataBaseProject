@@ -466,6 +466,25 @@ public class DatabaseHelper {
         return  books;
     }
 
+    public List <Book> getEveryBook(Connection connection) throws SQLException {
+         List<Book> books = new ArrayList<>();
+
+         String showBookTable = "SELECT * FROM BooK";
+         try(Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(showBookTable)) {
+             while(resultSet.next()) {
+                 Book book = new Book();
+                 book.setISBN(resultSet.getLong("ISBN"));
+                 book.setCopy_number(resultSet.getInt("copy_number"));
+                 book.setDescription(resultSet.getString("book_description"));
+                 book.setAuthor_name(resultSet.getString("author"));
+                 book.setTitle(resultSet.getString("book_title"));
+                 books.add(book);
+             }
+         }
+         return books;
+    }
+
 
 }
 

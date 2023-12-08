@@ -111,6 +111,12 @@ public class main{
                 System.out.println("book with multiple copies " + book.getTitle());
             }
 
+            List<Book> allbooksfromdb = db.getEveryBook(connection);
+            System.out.println("All the books in the db:");
+            for(Book book:allbooksfromdb) {
+                System.out.println(book.getTitle());
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
