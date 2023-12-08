@@ -41,12 +41,12 @@ public class main{
             Card cardTwo = new Card(123400019653L, sqlDateTwo,personThree.getSsn());
 
             // //creating date object since transaction stores SQL date
-            java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 12, 15);
+            java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 11, 15);
             java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2024 - 1900, 1, 15);
 
             //creating dummy transaction data
-            Transaction transactionOne = new Transaction(001200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
-            Transaction transactionTwo = new Transaction(003312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
+            Transaction transactionOne = new Transaction(101200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
+            Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
 
             // Create and insert a new person
             db.insertPerson(connection, personOne);
@@ -74,7 +74,7 @@ public class main{
             personOne.setPhone( 999222000);
             personOne.setAddress("345 Broadway Apartment 3C");
             librarianOne.setLibrarian_title("Janitor");
-            bookOne.setTitle("Of mice and men");
+            bookThree.setTitle("Of mice and men");
 
             java.sql.Date sqlDateNew = new java.sql.Date(2024 - 1900, 2, 2);
             cardOne.setExpirationDate(sqlDateNew);
@@ -83,7 +83,7 @@ public class main{
             // Modify information
             db.modifyPerson(connection, personOne);
             db.modifyLibrarian(connection, librarianOne);
-            db.modifyBook(connection, bookOne);
+            db.modifyBook(connection, bookThree);
             db.modifyCard(connection, cardOne);
             db.modifyTransaction(connection, transactionOne);
 
