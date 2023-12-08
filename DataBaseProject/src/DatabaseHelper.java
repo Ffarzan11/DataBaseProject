@@ -388,17 +388,172 @@ public class DatabaseHelper {
      * @param person the person to be deleted
      * @throws SQLException throws SQL exception if there is an issue deleting person
      */
-    public void deletePerson(Connection connection,Person person) throws SQLException {
-        //delete the person whose ssn matches the ssn of the person given on param
-        String deleteSQL = "DELETE FROM Person WHERE ssn = ?";
+    public void deletePerson(Connection connection, Person person) throws SQLException {
+        try {
+            // Step 1: Select card_numbers that match with the person's ssn from the Card table
+            String selectCardNumbersSQL = "SELECT card_number FROM Card WHERE ssn = ?";
+            try (PreparedStatement selectCardNumbersStatement = connection.prepareStatement(selectCardNumbersSQL)) {
+                selectCardNumbersStatement.setInt(1, person.getSsn());
+                // Execute the query to get card_numbers
+                // (Assuming card_number is a unique identifier for cards)
+                try (var resultSet = selectCardNumbersStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        long cardNumber = resultSet.getLong("card_number");
+
+                        // Step 2: Delete transactions with the selected card_number from the Transaction table
+                        String deleteTransactionsSQL = "DELETE FROM Transaction WHERE card_number = ?";
+                        try (PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsSQL)) {
+                            deleteTransactionsStatement.setLong(1, cardNumber);
+                            deleteTransactionsStatement.executeUpdate();
+                        }
+
+                        // Step 3: Delete records with the selected card_number from the Card table
+                        String deleteCardSQL = "DELETE FROM Card WHERE card_number = ?";
+                        try (PreparedStatement deleteCardStatement = connection.prepareStatement(deleteCardSQL)) {
+                            deleteCardStatement.setLong(1, cardNumber);
+                            deleteCardStatement.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Step 4: Check if a faculty exists for the person's ssn and delete it from the Faculty table
+            String deleteFacultySQL = "DELETE FROM Faculty WHERE ssn = ?";
+            try (PreparedStatement deleteFacultyStatement = connection.prepareStatement(deleteFacultySQL)) {
+                deleteFacultyStatement.setInt(1, person.getSsn());
+                deleteFacultyStatement.executeUpdate();
+            }
+
+            // Step 5: Delete the person from the Person table
+            String deletePersonSQL = "DELETE FROM Person WHERE ssn = ?";
+            try (PreparedStatement deletePersonStatement = connection.prepareStatement(deletePersonSQL)) {
+                deletePersonStatement.setInt(1, person.getSsn());
+                int rowsAffected = deletePersonStatement.executeUpdate();
+                System.out.println(rowsAffected + " row(s) deleted.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Rethrow the exception after printing the stack trace
+        }
+    }
+
+
+    /**
+     *
+     * @param connection database connection
+     * @param faculty the faculty to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deleteFaculty(Connection connection,Faculty faculty) throws SQLException {
+        //delete the faculty whose faculty_id matches the faculty_id of the faculty given on param
+        String deleteSQL = "DELETE FROM Faculty WHERE faculty_id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
-            preparedStatement.setInt(1, person.getSsn());
+            preparedStatement.setInt(1, faculty.getFacultyID());
 
             int rowsAffected = preparedStatement.executeUpdate();
             System.out.println(rowsAffected + " row(s) deleted.");
         }
     }
+    /**
+     *
+     * @param connection database connection
+     * @param librarian the librarian to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deleteLibrarian(Connection connection,Librarian librarian) throws SQLException {
+        //delete the transaction that has librarian_id that matches with the librarian_id given on param
+        String deleteSQL1 = "DELETE FROM Transaction WHERE librarian_id = ?";
+        //delete the librarian whose librarian_id matches the librarian_id of the librarian given on param
+        String deleteSQL2 = "DELETE FROM Librarian WHERE librarian_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL1)) {
+            preparedStatement.setInt(1, librarian.getLibrarian_ID());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " row(s) deleted.");
+            try (PreparedStatement preparedStatement2 = connection.prepareStatement(deleteSQL2)) {
+                preparedStatement2.setInt(1, librarian.getLibrarian_ID());
+
+                int rowsAffected2 = preparedStatement2.executeUpdate();
+                System.out.println(rowsAffected2 + " row(s) deleted.");
+            }
+        }
+    }
+
+
+    public void deleteBook(Connection connection, Book book) throws SQLException {
+        try {
+            // Step 1: Delete transactions with matching copy_number from the Transaction table
+            String deleteTransactionsSQL = "DELETE FROM Transaction WHERE copy_number = ?";
+            try (PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsSQL)) {
+                deleteTransactionsStatement.setInt(1, book.getCopy_number());
+                int transactionsDeleted = deleteTransactionsStatement.executeUpdate();
+                System.out.println(transactionsDeleted + " transaction(s) deleted.");
+            }
+
+            // Step 2: Delete the book with matching ISBN and copy_number from the Book table
+            String deleteBookSQL = "DELETE FROM Book WHERE ISBN = ? AND copy_number = ?";
+            try (PreparedStatement deleteBookStatement = connection.prepareStatement(deleteBookSQL)) {
+                deleteBookStatement.setLong(1, book.getISBN());
+                deleteBookStatement.setInt(2, book.getCopy_number());
+                int booksDeleted = deleteBookStatement.executeUpdate();
+                System.out.println(booksDeleted + " book(s) deleted.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Rethrow the exception after printing the stack trace
+        }
+    }
+
+    /**
+     *
+     * @param connection database connection
+     * @param card the card to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deleteCard(Connection connection,Card card) throws SQLException {
+        //delete the transaction whose card_number matches the card_number of the card given on param
+        String deleteSQL1 = "DELETE FROM Transaction WHERE card_number = ?";
+        //delete the card whose card_number matches the card_number of the card given on param
+        String deleteSQL2 = "DELETE FROM Card WHERE card_number = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL1)) {
+            preparedStatement.setLong(1, card.getCardNumber());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " row(s) deleted.");
+            try (PreparedStatement preparedStatement2 = connection.prepareStatement(deleteSQL2)) {
+                preparedStatement2.setLong(1, card.getCardNumber());
+
+                int rowsAffected2 = preparedStatement2.executeUpdate();
+                System.out.println(rowsAffected2 + " row(s) deleted.");
+            }
+        }
+
+    }
+
+
+
+    /**
+     *
+     * @param connection database connection
+     * @param transaction the transaction to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deleteTransaction(Connection connection,Transaction transaction) throws SQLException {
+        //delete the transaction whose transaction_id matches the transaction_id of the transaction given on param
+        String deleteSQL = "DELETE FROM Transaction WHERE transaction_id = ?";
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
+            preparedStatement.setLong(1, transaction.getTransaction_ID());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " row(s) deleted.");
+        }
+    }
+
     public List<Person> getAllPersons(Connection connection) throws SQLException {
         List<Person> persons = new ArrayList<>();
         String showTableSQL = "SELECT * FROM Person";

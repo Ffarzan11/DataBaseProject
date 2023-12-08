@@ -20,6 +20,7 @@ public class main{
             Person personOne = new Person(100100100, "Alice Smith", 2221114453L, "746 Broadway Apartment 1F");
             Person personTwo = new Person(007220130, "Mary Austin", 4349670982L, "5 Corona, Apartment 2E");
             Person personThree = new Person(111220321, "John Smith", 2120349874L, "Ridgewood apartment#2C");
+
             //faculty dummy data
             Faculty facultyOne = new Faculty(personOne.getSsn(), personOne.getName(), personOne.getPhone(), personOne.getAddress(), 333444222);
             Faculty facultyTwo = new Faculty(personThree.getSsn(), personThree.getName(), personThree.getPhone(), personThree.getAddress(), 342000122);
@@ -92,8 +93,14 @@ public class main{
                 System.out.println("updated person " + person);
             }
 
-            // Delete the person with SSN 123456783
+            // Delete
             db.deletePerson(connection, personTwo);
+            db.deleteFaculty(connection, facultyTwo);
+            db.deleteLibrarian(connection, librarianOne);
+            //deletes book copy
+            db.deleteBook(connection, bookOne);
+            db.deleteCard(connection, cardOne);
+            db.deleteTransaction(connection, transactionOne);
 
             // Show the final contents of the "Person" table
             List<Person> finalPersons = db.getAllPersons(connection);
