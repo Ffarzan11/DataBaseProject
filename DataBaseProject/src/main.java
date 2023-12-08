@@ -47,6 +47,8 @@ public class main{
             //creating dummy transaction data
             Transaction transactionOne = new Transaction(101200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
             Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
+            Transaction transactionThree = new Transaction(105800217,tranOneSqlDate, bookTwo.getCopy_number(), bookTwo.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber() );
+
 
             // Create and insert a new person
             db.insertPerson(connection, personOne);
@@ -62,6 +64,7 @@ public class main{
             db.insertCard(connection, cardTwo);
             db.insertTransaction(connection, transactionOne);
             db.insertTransaction(connection, transactionTwo);
+            db.insertTransaction(connection,transactionThree);
 
 
 
@@ -98,7 +101,9 @@ public class main{
             db.deleteFaculty(connection, facultyTwo);
             db.deleteLibrarian(connection, librarianOne);
             //deletes book copy
-            db.deleteBook(connection, bookOne);
+            db.deleteBookCopy(connection, bookOne);
+            //deletes all existing records of the book based on isbn
+            db.deleteBook(connection, bookTwo);
             db.deleteCard(connection, cardOne);
             db.deleteTransaction(connection, transactionOne);
 
@@ -116,6 +121,7 @@ public class main{
             List<Book> bookWithMultipleCopies = db.getAllBooksWithMultipleCopies(connection);
             for(Book book: bookWithMultipleCopies) {
                 System.out.println("book with multiple copies " + book.getTitle());
+
             }
 
             List<Book> allbooksfromdb = db.getEveryBook(connection);
@@ -123,6 +129,7 @@ public class main{
             for(Book book:allbooksfromdb) {
                 System.out.println(book.getTitle());
             }
+
 
         } catch (SQLException e) {
             e.printStackTrace();

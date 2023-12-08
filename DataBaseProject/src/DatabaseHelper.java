@@ -56,8 +56,8 @@ public class DatabaseHelper {
             + "librarian_id INT(9),"
             + "card_number BIGINT(12),"
             + "PRIMARY KEY (transaction_id),"
-            + "FOREIGN KEY (copy_number) REFERENCES Book(copy_number),"
-            + "FOREIGN KEY (ISBN) REFERENCES Book(ISBN),"
+            + "FOREIGN KEY (ISBN, copy_number) REFERENCES Book(ISBN, copy_number),"
+            //"FOREIGN KEY (ISBN) REFERENCES Book(ISBN),"
             + "FOREIGN KEY (librarian_id) REFERENCES Librarian(librarian_id),"
             + "FOREIGN KEY (card_number) REFERENCES Card(card_number)"
             + ")";
@@ -283,6 +283,7 @@ public class DatabaseHelper {
         }
     }
 
+
     /**
      *
      * @param connection connection to the database
@@ -395,7 +396,6 @@ public class DatabaseHelper {
             try (PreparedStatement selectCardNumbersStatement = connection.prepareStatement(selectCardNumbersSQL)) {
                 selectCardNumbersStatement.setInt(1, person.getSsn());
                 // Execute the query to get card_numbers
-                // (Assuming card_number is a unique identifier for cards)
                 try (var resultSet = selectCardNumbersStatement.executeQuery()) {
                     while (resultSet.next()) {
                         long cardNumber = resultSet.getLong("card_number");
@@ -481,13 +481,20 @@ public class DatabaseHelper {
         }
     }
 
-
-    public void deleteBook(Connection connection, Book book) throws SQLException {
+    /**
+     * Delete a book copy and related transactions from the database.
+     *
+     * @param connection the database connection
+     * @param book       the book copy to be deleted
+     * @throws SQLException if there is an issue deleting the book
+     */
+    public void deleteBookCopy(Connection connection, Book book) throws SQLException {
         try {
-            // Step 1: Delete transactions with matching copy_number from the Transaction table
-            String deleteTransactionsSQL = "DELETE FROM Transaction WHERE copy_number = ?";
+            // Step 1: Delete transactions with matching ISBN and copy_number from the Transaction table
+            String deleteTransactionsSQL = "DELETE FROM Transaction WHERE ISBN = ? AND copy_number = ?";
             try (PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsSQL)) {
-                deleteTransactionsStatement.setInt(1, book.getCopy_number());
+                deleteTransactionsStatement.setLong(1, book.getISBN());
+                deleteTransactionsStatement.setInt(2, book.getCopy_number());
                 int transactionsDeleted = deleteTransactionsStatement.executeUpdate();
                 System.out.println(transactionsDeleted + " transaction(s) deleted.");
             }
@@ -505,6 +512,38 @@ public class DatabaseHelper {
             throw e; // Rethrow the exception after printing the stack trace
         }
     }
+
+    /**
+     * Delete a book and related transactions from the database.
+     *
+     * @param connection database connection
+     * @param book the book to be deleted
+     * @throws SQLException throws SQL exception if there is an issue deleting person
+     */
+    public void deleteBook(Connection connection, Book book) throws SQLException {
+        try {
+            // Step 1: Delete transactions if it matches the ISBN of the book in the param
+            String deleteTransactionsSQL = "DELETE FROM Transaction WHERE ISBN = ?";
+            try (PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsSQL)) {
+                deleteTransactionsStatement.setLong(1, book.getISBN());
+                int transactionsDeleted = deleteTransactionsStatement.executeUpdate();
+                System.out.println(transactionsDeleted + " transaction(s) deleted.");
+            }
+
+            // Step 2: Delete the book if it matches the ISBN of the book in the param
+            String deleteBookSQL = "DELETE FROM Book WHERE ISBN = ?";
+            try (PreparedStatement deleteBookStatement = connection.prepareStatement(deleteBookSQL)) {
+                deleteBookStatement.setLong(1, book.getISBN());
+                int booksDeleted = deleteBookStatement.executeUpdate();
+                System.out.println(booksDeleted + " book(s) deleted.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Rethrow the exception after printing the stack trace
+        }
+    }
+
+
 
     /**
      *
@@ -639,6 +678,7 @@ public class DatabaseHelper {
          }
          return books;
     }
+
 
 
 }
