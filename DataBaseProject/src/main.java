@@ -130,6 +130,12 @@ public class main{
                 System.out.println(book.getTitle());
             }
 
+            List<Person> NonfacultyCardHolder = db.getAllNonFacultyCardHolder(connection);
+                System.out.println("Non Faculty Card Holder In the library: ");
+                for(Person person:NonfacultyCardHolder) {
+                    System.out.println(person.getName());
+                }
+
 
         } catch (SQLException e) {
             e.printStackTrace();

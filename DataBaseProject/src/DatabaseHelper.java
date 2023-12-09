@@ -680,6 +680,32 @@ public class DatabaseHelper {
     }
 
 
+    public List <Person> getAllNonFacultyCardHolder(Connection connection) throws SQLException {
+        List<Person> persons = new ArrayList<>();
+
+        String showAllNonfacultyCardHolder = "SELECT * FROM Person " +
+                "LEFT JOIN Faculty ON Person.ssn = Faculty.ssn " +
+                "LEFT JOIN CARD ON Person.ssn = Card.ssn " +
+                "WHERE Faculty.ssn IS NULL AND CARD.ssn IS NOT NULL";
+
+        try(Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(showAllNonfacultyCardHolder)) {
+
+            while(resultSet.next()) {
+
+                Person person = new Person();
+                person.setSsn(resultSet.getInt("ssn"));
+                person.setName(resultSet.getString("name"));
+                person.setAddress(resultSet.getString("address"));
+                person.setPhone(resultSet.getLong("phone"));
+                persons.add(person);
+
+               }
+            }
+        return persons;
+    }
+
+
 
 }
 
