@@ -33,22 +33,28 @@ public class main{
             Book bookTwo = new Book(1234567831234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 2 );
             Book bookThree = new Book(1234507890034L, "Harry Potter", "Fantasy", "J.K.Rowling", 1);
             //creating date object since card stores SQL date
-            java.sql.Date sqlDate = new java.sql.Date(2023 - 1900, 11, 1);
-            java.sql.Date sqlDateTwo = new java.sql.Date(2023 - 1900, 12, 15);
+            java.sql.Date sqlDate = new java.sql.Date(2020 - 1900, 11, 1);
+            java.sql.Date sqlDateTwo = new java.sql.Date(2021 - 1900, 12, 15);
 
             //card dummy data
             Card cardOne = new Card(123456789653L, sqlDate, personOne.getSsn());
             Card cardTwo = new Card(123400019653L, sqlDateTwo,personThree.getSsn());
 
             // //creating date object since transaction stores SQL date
-            java.sql.Date tranOneSqlDate = new java.sql.Date(2023 - 1900, 11, 15);
-            java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2024 - 1900, 1, 15);
+            java.sql.Date tranOneSqlDate = new java.sql.Date(2020 - 1900, 11, 15);
+            java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2021 - 1900, 1, 15);
 
             //creating dummy transaction data
             Transaction transactionOne = new Transaction(101200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
             Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
             Transaction transactionThree = new Transaction(105800217,tranOneSqlDate, bookTwo.getCopy_number(), bookTwo.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber() );
 
+
+            // Dummy data for a new book
+            Book newBook = new Book(1204567531234L, "The Catcher in the Rye", "Coming-of-age novel", "J.D. Salinger", 1);
+
+            // Insert the new book and transaction into the database
+            db.insertBook(connection, newBook);
 
             // Create and insert a new person
             db.insertPerson(connection, personOne);
@@ -79,8 +85,9 @@ public class main{
             librarianOne.setLibrarian_title("Janitor");
             bookThree.setTitle("Of mice and men");
 
-            java.sql.Date sqlDateNew = new java.sql.Date(2024 - 1900, 2, 2);
+            java.sql.Date sqlDateNew = new java.sql.Date(2021 - 1900, 2, 2);
             cardOne.setExpirationDate(sqlDateNew);
+            transactionTwo.setReturn_date(sqlDateNew);
             transactionOne.setReturn_date(sqlDateNew);
 
             // Modify information
@@ -88,6 +95,7 @@ public class main{
             db.modifyLibrarian(connection, librarianOne);
             db.modifyBook(connection, bookThree);
             db.modifyCard(connection, cardOne);
+            db.modifyTransaction(connection,transactionTwo);
             db.modifyTransaction(connection, transactionOne);
 
             // Show the updated contents of the "Person" table
@@ -96,16 +104,16 @@ public class main{
                 System.out.println("updated person " + person);
             }
 
-            // Delete
-            db.deletePerson(connection, personTwo);
-            db.deleteFaculty(connection, facultyTwo);
-            db.deleteLibrarian(connection, librarianOne);
-            //deletes book copy
-            db.deleteBookCopy(connection, bookOne);
-            //deletes all existing records of the book based on isbn
-            db.deleteBook(connection, bookTwo);
-            db.deleteCard(connection, cardOne);
-            db.deleteTransaction(connection, transactionOne);
+//            // Delete
+//            db.deletePerson(connection, personTwo);
+//            db.deleteFaculty(connection, facultyTwo);
+//            db.deleteLibrarian(connection, librarianOne);
+//            //deletes book copy
+//            db.deleteBookCopy(connection, bookOne);
+//            //deletes all existing records of the book based on isbn
+//            db.deleteBook(connection, bookTwo);
+//            db.deleteCard(connection, cardOne);
+//            db.deleteTransaction(connection, transactionOne);
 
             // Show the final contents of the "Person" table
             List<Person> finalPersons = db.getAllPersons(connection);
@@ -119,22 +127,36 @@ public class main{
             }
 
             List<Book> bookWithMultipleCopies = db.getAllBooksWithMultipleCopies(connection);
+            System.out.println("book with multiple copies: ");
             for(Book book: bookWithMultipleCopies) {
-                System.out.println("book with multiple copies " + book.getTitle());
+                System.out.println(book.getTitle());
 
             }
 
-            List<Book> allbooksfromdb = db.getEveryBook(connection);
+            List<Book> allbooksfromdb = db.getEveryDistinctBook(connection);
             System.out.println("All the books in the db:");
             for(Book book:allbooksfromdb) {
                 System.out.println(book.getTitle());
             }
 
             List<Person> NonfacultyCardHolder = db.getAllNonFacultyCardHolder(connection);
-                System.out.println("Non Faculty Card Holder In the library: ");
-                for(Person person:NonfacultyCardHolder) {
-                    System.out.println(person.getName());
-                }
+            System.out.println("Non Faculty Card Holder In the library: ");
+            for(Person person:NonfacultyCardHolder) {                    System.out.println(person.getName());
+            }
+
+            List<Transaction> allTransactions = db.getEveryTransactionReport(connection);
+
+            System.out.println("All Transactions:");
+            for (Transaction transaction : allTransactions) {
+                System.out.println(transaction);
+            }
+
+            List<Book> overdueBooks= db.getOverdueBooks(connection);
+            System.out.println("All overduebooks:");
+            for(Book overdueBook :overdueBooks ){
+                System.out.println(overdueBook);
+            }
+
 
 
         } catch (SQLException e) {

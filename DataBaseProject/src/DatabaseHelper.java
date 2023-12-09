@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 public class DatabaseHelper {
 
@@ -660,23 +661,47 @@ public class DatabaseHelper {
         return  books;
     }
 
-    public List <Book> getEveryBook(Connection connection) throws SQLException {
-         List<Book> books = new ArrayList<>();
+    public List<Book> getEveryDistinctBook(Connection connection) throws SQLException {
+        List<Book> distinctBooks = new ArrayList<>();
 
-         String showBookTable = "SELECT * FROM BooK";
-         try(Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(showBookTable)) {
-             while(resultSet.next()) {
-                 Book book = new Book();
-                 book.setISBN(resultSet.getLong("ISBN"));
-                 book.setCopy_number(resultSet.getInt("copy_number"));
-                 book.setDescription(resultSet.getString("book_description"));
-                 book.setAuthor_name(resultSet.getString("author"));
-                 book.setTitle(resultSet.getString("book_title"));
-                 books.add(book);
-             }
-         }
-         return books;
+        String showDistinctBooks = "SELECT DISTINCT ISBN, book_title, author, book_description FROM Book";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(showDistinctBooks)) {
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setISBN(resultSet.getLong("ISBN"));
+                book.setDescription(resultSet.getString("book_description"));
+                book.setAuthor_name(resultSet.getString("author"));
+                book.setTitle(resultSet.getString("book_title"));
+                distinctBooks.add(book);
+            }
+        }
+        return distinctBooks;
+    }
+
+    public List<Transaction> getEveryTransactionReport(Connection connection) throws SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+
+        String sql = "SELECT * FROM Transaction";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                // Create Transaction object and add it to the list
+                Transaction transaction = new Transaction();
+
+                transaction.setTransaction_ID(resultSet.getInt("Transaction_ID"));
+                transaction.setDate(resultSet.getDate("return_date"));
+                transaction.setCopy_number(resultSet.getInt("copy_number"));
+                transaction.setISBN(resultSet.getLong("ISBN"));
+                transaction.setReturn_date(resultSet.getDate("return_date"));
+                transaction.setLibrarian_ID(resultSet.getInt("Librarian_ID"));
+                transaction.setCard_num(resultSet.getLong("card_number"));
+                transactions.add(transaction);
+            }
+        }
+
+        return transactions;
     }
 
 
@@ -700,13 +725,70 @@ public class DatabaseHelper {
                 person.setPhone(resultSet.getLong("phone"));
                 persons.add(person);
 
-               }
             }
+        }
         return persons;
+    }
+
+    // Get overdue books
+    public List<Book> getOverdueBooks(Connection connection) {
+        List<Book> overdueBooks = new ArrayList<>();
+
+        // Step 1: Select records from Transaction table where return_date is less than the current date
+        String selectOverdueBooksQuery = "SELECT t.ISBN, t.copy_number " +
+                "FROM Transaction t " +
+                "WHERE t.return_date < CURDATE()";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectOverdueBooksQuery)) {
+
+            while (resultSet.next()) {
+                long isbn = resultSet.getLong("ISBN");
+                int copyNumber = resultSet.getInt("copy_number");
+
+                // Step 2: Match ISBN and copy_number with Book table to get Book details
+                Book overdueBook = getBookDetails(connection, isbn, copyNumber);
+
+                if (overdueBook != null) {
+                    overdueBooks.add(overdueBook);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return overdueBooks;
+    }
+
+    // Helper method to get Book details based on ISBN and copy_number
+    private Book getBookDetails(Connection connection, long isbn, int copyNumber) {
+        String selectBookQuery = "SELECT * FROM Book WHERE ISBN = ? AND copy_number = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookQuery)) {
+            preparedStatement.setLong(1, isbn);
+            preparedStatement.setInt(2, copyNumber);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Book(
+                            resultSet.getLong("ISBN"),
+                            resultSet.getString("book_title"),
+                            resultSet.getString("book_description"),
+                            resultSet.getString("author"),
+                            resultSet.getInt("copy_number")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
 
 }
-
 
