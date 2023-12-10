@@ -788,6 +788,49 @@ public class DatabaseHelper {
         return null;
     }
 
+    public List<Book> getALLCheckedOutBooks(Connection connection) throws SQLException {
+        List<Book> distinctBooks = new ArrayList<>();
+
+        String sql = "SELECT DISTINCT B.* " +
+                "FROM Transaction T " +
+                "JOIN Book B ON T.ISBN = B.ISBN AND T.copy_number = B.copy_number";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setISBN(resultSet.getLong("ISBN"));
+                book.setCopy_number(resultSet.getInt("copy_number"));
+                book.setDescription(resultSet.getString("book_description"));
+                book.setAuthor_name(resultSet.getString("author"));
+                book.setTitle(resultSet.getString("book_title"));
+                distinctBooks.add(book);
+            }
+        }
+
+        return distinctBooks;
+    }
+
+
+    public List<String> getBooksUsedMoreThanOnce(Connection connection) throws SQLException {
+        List<String> booksUsedMoreThanOnce = new ArrayList<>();
+
+        String sql = "SELECT B.book_title " +
+                "FROM Transaction T " +
+                "JOIN Book B ON T.ISBN = B.ISBN " +
+                "GROUP BY B.ISBN, B.book_title " +
+                "HAVING COUNT(*) > 1";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                String bookTitle = resultSet.getString("book_title");
+                booksUsedMoreThanOnce.add(bookTitle);
+            }
+        }
+
+        return booksUsedMoreThanOnce;
+    }
 
 
 }

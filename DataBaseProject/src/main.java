@@ -32,6 +32,18 @@ public class main{
             Book bookOne = new Book(1234567831234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 1 );
             Book bookTwo = new Book(1234567831234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 2 );
             Book bookThree = new Book(1234507890034L, "Harry Potter", "Fantasy", "J.K.Rowling", 1);
+
+            Book newBook = new Book(1204567531234L, "The Catcher in the Rye", "Coming-of-age novel", "J.D. Salinger", 1);
+            Book newbook1 = new Book(1204567531234L, "The Catcher in the Rye", "Coming-of-age novel", "J.D. Salinger",2);
+            Book newbook2 = new Book(1204567531234L, "The Catcher in the Rye", "Coming-of-age novel", "J.D. Salinger",3);
+
+            Book book6 = new Book(3000000006789L, "The Lord of the Rings: The Fellowship of the Ring", "Epic quest to destroy ring", "J.R.R. Tolkien", 1);
+            Book book8 = new Book(3000000008901L, "The Da Vinci Code", "Mystery of religion and art", "Dan Brown", 1);
+            Book book9 = new Book(3000000009012L, "The Alchemist", "Shepherd's journey to self-discovery", "Paulo Coelho", 1);
+            Book book10 = new Book(3000000010123L, "Life of Pi", "Survival tale with a tiger", "Yann Martel", 1);
+            Book book11 = new Book(3000000010123L, "Life of Pi", "Survival tale with a tiger", "Yann Martel", 2);
+
+
             //creating date object since card stores SQL date
             java.sql.Date sqlDate = new java.sql.Date(2020 - 1900, 11, 1);
             java.sql.Date sqlDateTwo = new java.sql.Date(2021 - 1900, 12, 15);
@@ -39,22 +51,42 @@ public class main{
             //card dummy data
             Card cardOne = new Card(123456789653L, sqlDate, personOne.getSsn());
             Card cardTwo = new Card(123400019653L, sqlDateTwo,personThree.getSsn());
+            Card cardThree = new Card(123411119653L,sqlDateTwo,personTwo.getSsn());
 
             // //creating date object since transaction stores SQL date
             java.sql.Date tranOneSqlDate = new java.sql.Date(2020 - 1900, 11, 15);
             java.sql.Date tranOneReturnSqlDate = new java.sql.Date(2021 - 1900, 1, 15);
+
+            java.sql.Date tranNewSqlDate = new java.sql.Date(2024-1900,11,15);
+            java.sql.Date tranNewreturnSQLDate = new java.sql.Date(2024-1900,5,3);
+
 
             //creating dummy transaction data
             Transaction transactionOne = new Transaction(101200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
             Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
             Transaction transactionThree = new Transaction(105800217,tranOneSqlDate, bookTwo.getCopy_number(), bookTwo.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber() );
 
+            // creating dummy transaction for only checked_out books
+
+            Transaction transactionFour,transactionFive,transactionSix;
+
+            transactionFour = new Transaction(123456789,tranNewSqlDate, newBook.getCopy_number(), newBook.getISBN(), tranNewreturnSQLDate, librarianOne.getLibrarian_ID(), cardThree.getCardNumber());
+            transactionFive = new Transaction(987654321,tranNewSqlDate, newbook1.getCopy_number(), newbook1.getISBN(), tranNewreturnSQLDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber());
+            transactionSix = new Transaction(234567890,tranNewSqlDate, newbook2.getCopy_number(), newbook2.getISBN(), tranNewreturnSQLDate, librarianOne.getLibrarian_ID(), cardThree.getCardNumber());
+
 
             // Dummy data for a new book
-            Book newBook = new Book(1204567531234L, "The Catcher in the Rye", "Coming-of-age novel", "J.D. Salinger", 1);
+
 
             // Insert the new book and transaction into the database
             db.insertBook(connection, newBook);
+            db.insertBook(connection,newbook1);
+            db.insertBook(connection,newbook2);
+            db.insertBook(connection,book6);
+            db.insertBook(connection,book8);
+            db.insertBook(connection,book9);
+            db.insertBook(connection,book10);
+            db.insertBook(connection,book11);
 
             // Create and insert a new person
             db.insertPerson(connection, personOne);
@@ -68,9 +100,13 @@ public class main{
             db.insertBook(connection, bookThree);
             db.insertCard(connection, cardOne);
             db.insertCard(connection, cardTwo);
+            db.insertCard(connection,cardThree);
             db.insertTransaction(connection, transactionOne);
             db.insertTransaction(connection, transactionTwo);
             db.insertTransaction(connection,transactionThree);
+            db.insertTransaction(connection, transactionFour);
+            db.insertTransaction(connection, transactionFive);
+            db.insertTransaction(connection,transactionSix);
 
 
 
@@ -141,7 +177,9 @@ public class main{
 
             List<Person> NonfacultyCardHolder = db.getAllNonFacultyCardHolder(connection);
             System.out.println("Non Faculty Card Holder In the library: ");
-            for(Person person:NonfacultyCardHolder) {                    System.out.println(person.getName());
+            for(Person person:NonfacultyCardHolder)
+             {
+                 System.out.println(person.getName());
             }
 
             List<Transaction> allTransactions = db.getEveryTransactionReport(connection);
@@ -155,6 +193,19 @@ public class main{
             System.out.println("All overduebooks:");
             for(Book overdueBook :overdueBooks ){
                 System.out.println(overdueBook);
+            }
+
+            List<Book> allCheckedOutBooksFromDb = db.getALLCheckedOutBooks(connection);
+            System.out.println("All Checked_Out books in db:");
+            for(Book book:allCheckedOutBooksFromDb) {
+                System.out.println(book.getTitle() + ",Copy #: " + book.getCopy_number());
+            }
+
+
+            List<String> booksUsedMoreThanOnce = db.getBooksUsedMoreThanOnce(connection);
+            System.out.println("Most Popular Checked_Out Books:");
+            for (String bookTitle : booksUsedMoreThanOnce) {
+                System.out.println(bookTitle);
             }
 
 
