@@ -27,6 +27,7 @@ public class main{
 
             //librarian dummy data
             Librarian librarianOne = new Librarian(222111333, "Chief Librarian");
+            Librarian librarianTwo = new Librarian(295101336, "Checkout Librarian");
 
             //book dummy data
             Book bookOne = new Book(1234567831234L,"To Kill a Mockingbird","Race, justice, and morality", "Harper Lee", 1 );
@@ -63,7 +64,7 @@ public class main{
 
             //creating dummy transaction data
             Transaction transactionOne = new Transaction(101200214,tranOneSqlDate, bookOne.getCopy_number(), bookOne.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardOne.getCardNumber() );
-            Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber());
+            Transaction transactionTwo = new Transaction(103312012, tranOneSqlDate, bookThree.getCopy_number(), bookThree.getISBN(), tranOneReturnSqlDate, librarianTwo.getLibrarian_ID(), cardTwo.getCardNumber());
             Transaction transactionThree = new Transaction(105800217,tranOneSqlDate, bookTwo.getCopy_number(), bookTwo.getISBN(), tranOneReturnSqlDate, librarianOne.getLibrarian_ID(), cardTwo.getCardNumber() );
 
             // creating dummy transaction for only checked_out books
@@ -95,6 +96,7 @@ public class main{
             db.insertFaculty(connection, facultyOne);
             db.insertFaculty(connection, facultyTwo);
             db.insertLibrarian(connection, librarianOne);
+            db.insertLibrarian(connection, librarianTwo);
             db.insertBook(connection, bookOne);
             db.insertBook(connection, bookTwo);
             db.insertBook(connection, bookThree);
@@ -140,16 +142,20 @@ public class main{
                 System.out.println("updated person " + person);
             }
 
-//            // Delete
-//            db.deletePerson(connection, personTwo);
-//            db.deleteFaculty(connection, facultyTwo);
-//            db.deleteLibrarian(connection, librarianOne);
-//            //deletes book copy
-//            db.deleteBookCopy(connection, bookOne);
-//            //deletes all existing records of the book based on isbn
-//            db.deleteBook(connection, bookTwo);
-//            db.deleteCard(connection, cardOne);
-//            db.deleteTransaction(connection, transactionOne);
+             // Delete the Person with ssn 007220130
+             db.deletePerson(connection, personTwo);
+            //Delete the Faculty with faculty_id 342000122
+             db.deleteFaculty(connection, facultyTwo);
+             //Delete the Librarian with librarian_id 295101336
+             db.deleteLibrarian(connection, librarianTwo);
+            //deletes Book copy with ISBN 1234567831234 and copy_number 1
+             db.deleteBookCopy(connection, bookOne);
+             //deletes the Book based on ISBN 1234567831234
+             db.deleteBook(connection, bookTwo);
+             //deletes the Card with card_number 123456789653
+             db.deleteCard(connection, cardOne);
+             //deletes the Transaction with transaction_id 101200214
+             db.deleteTransaction(connection, transactionOne);
 
             // Show the final contents of the "Person" table
             List<Person> finalPersons = db.getAllPersons(connection);

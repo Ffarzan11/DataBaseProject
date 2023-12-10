@@ -643,23 +643,58 @@ public class DatabaseHelper {
 
 
 
-    public List <Book> getAllBooksWithMultipleCopies(Connection connection) throws SQLException {
-        List<Book> books = new ArrayList<>();
-        String showBookTable = "SELECT * FROM Book WHERE copy_number > 1";
-        try(Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(showBookTable)) {
+    // Method to get all books with multiple copies
+    public List<Book> getAllBooksWithMultipleCopies(Connection connection) throws SQLException {
+        List<Book> booksWithMultipleCopies = new ArrayList<>();
+
+
+        // SQL query to retrieve books with multiple copies
+        String query = "SELECT ISBN, COUNT(*) AS copy_count FROM Book GROUP BY ISBN HAVING copy_count > 1";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
             while (resultSet.next()) {
-                Book book = new Book();
-                book.setISBN(resultSet.getLong("ISBN"));
-                book.setCopy_number(resultSet.getInt("copy_number"));
-                book.setDescription(resultSet.getString("book_description"));
-                book.setAuthor_name(resultSet.getString("author"));
-                book.setTitle(resultSet.getString("book_title"));
-                books.add(book);
+                long ISBN = resultSet.getLong("ISBN");
+                int copyCount = resultSet.getInt("copy_count");
+
+                // Check if the book has multiple copies
+                if (copyCount > 1) {
+                    // Add the book to the list
+                    Book book = getBookByISBN(connection, ISBN);
+                    if (book != null) {
+                        booksWithMultipleCopies.add(book);
+                    }
+                }
             }
         }
-        return  books;
+
+        return booksWithMultipleCopies;
     }
+
+    // Helper method to retrieve a book by ISBN
+    private Book getBookByISBN(Connection connection, long ISBN) throws SQLException {
+        String query = "SELECT * FROM Book WHERE ISBN = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, ISBN);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // Create and return the Book object
+                    return new Book(
+                            resultSet.getLong("ISBN"),
+                            resultSet.getString("book_title"),
+                            resultSet.getString("book_description"),
+                            resultSet.getString("author"),
+                            resultSet.getInt("copy_number")
+                    );
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     public List<Book> getEveryDistinctBook(Connection connection) throws SQLException {
         List<Book> distinctBooks = new ArrayList<>();
